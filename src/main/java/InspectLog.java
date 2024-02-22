@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.util.ArrayList;
 import java.util.List;
 
 public class InspectLog {
@@ -48,8 +49,12 @@ public class InspectLog {
         BufferedReader reader;
 
         try {
+            //int lineno = 1;
             int warns = 0;
             int assigns = 0;
+            boolean isProducerConfigStored = false;
+
+            List producerConfig = new ArrayList<String>();
             reader = new BufferedReader(new FileReader(config.getString("logfile")));
             String line = reader.readLine();
             String[] arr = config.getStringArray("topiclist");
@@ -73,6 +78,18 @@ public class InspectLog {
                     Utils.processArrayFromLine(line,arr);
                 }
 
+                if(line.contains("ProducerConfig values:")) {
+                    if(!isProducerConfigStored) {
+                        LOG.info("Found Replicator Producer config"+ line);
+                        line = reader.readLine();
+                        while(!line.contains("(org.apache.kafka.clients.producer.ProducerConfig)")){
+                            producerConfig.add(line);
+                            line = reader.readLine();
+                        }
+                    }
+                    isProducerConfigStored = true;
+                } // TODO - ConsumerConfig values
+
                 // Is Replicator logging Array information?
                 Utils.processArrayFromLine(line,arr);
 
@@ -84,6 +101,7 @@ public class InspectLog {
 
             LOG.info ("Total WARN level messages: "+warns);
             LOG.info ("Total Assignment messages: "+assigns);
+            LOG.info ("Producer" + producerConfig.toString());
             reader.close();
         } catch (IOException e) {
             e.printStackTrace();
