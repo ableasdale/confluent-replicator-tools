@@ -3,7 +3,6 @@ import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
 import org.apache.commons.configuration2.ex.ConfigurationException;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,7 +10,10 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class InspectLog {
 
@@ -21,9 +23,7 @@ public class InspectLog {
 
         PropertiesConfiguration config = null;
         try {
-
             Parameters params = new Parameters();
-
             FileBasedConfigurationBuilder<PropertiesConfiguration> builder =
                     new FileBasedConfigurationBuilder<>(
                             PropertiesConfiguration.class)
@@ -32,22 +32,20 @@ public class InspectLog {
                                     .setListDelimiterHandler(
                                             new DefaultListDelimiterHandler(','))
                                     .setThrowExceptionOnMissing(true));
-
             config = builder.getConfiguration();
-            //LOG.info("L"+config.getString("logfile"));
-
-            // access configuration properties
-            //if(config.getString("logfile") ;
         } catch (ConfigurationException cex) {
-            cex.printStackTrace();
+            LOG.error("Exception Caught: " + cex.getMessage(), cex);
         }
 
         BufferedReader reader;
 
         try {
-            //int lineno = 1;
-            int warns = 0;
-            int assigns = 0;
+            List consumer = new ArrayList<>();
+            List producer = new ArrayList<>();
+            List workerTask = new ArrayList<>();
+            List assigns = new ArrayList();
+            List warns = new ArrayList();
+            List unclassified = new ArrayList();
 
             Map configMap = new HashMap<String, List>();
 
@@ -55,125 +53,56 @@ public class InspectLog {
             String line = reader.readLine();
             String[] arr = config.getStringArray("topiclist");
 
+            // TODO: Flag ERROR level messages?
+
             while (line != null) {
                 // Flag WARNs
                 if (line.contains("WARN")) {
                     if (!line.contains("was supplied but isn't a known config") && !line.contains("Error registering AppInfo mbean")) {
-                        ++warns;
-                        LOG.warn(line);
+                        warns.add(line);
+                        //LOG.warn(line);
                     }
-                }
-
-                if (line.contains("computing task topic partition assignments")) {
-                    ++assigns;
-                    LOG.info("assignment detected");
-                }
-
-                if (line.contains("Found matching topics")) {
+                } else if (line.contains("INFO [Consumer")) {
+                    consumer.add(line);
+                } else if (line.contains("INFO [Producer")) {
+                    producer.add(line);
+                } else if (line.contains("INFO WorkerSourceTask")) {
+                    workerTask.add(line);
+                } else if (line.contains("computing task topic partition assignments")) {
+                    assigns.add(line);
+                    // TODO
+                    //LOG.info("assignment detected");
+                } else if (line.contains("Found matching topics")) {
                     LOG.debug("matching topics logged in an array..");
                     Utils.processArrayFromLine(line, arr);
-                }
-
-                /** To get this list run: grep "values:" /var/log/kafka/connect-distributed.log | cut -d " " -f4 | sort | uniq
-                 * AbstractConfig
-                 * AdminClientConfig
-                 * ConnectorConfig
-                 * ConsumerConfig
-                 * ConsumerOffsetsTranslatorConfig
-                 * DistributedConfig
-                 * EnrichedConnectorConfig
-                 * JsonConverterConfig
-                 * MonitoringInterceptorConfig
-                 * ProducerConfig
-                 * ReplicatorSourceConnectorConfig
-                 * ReplicatorSourceTaskConfig
-                 * SourceConnectorConfig
-                 * TaskConfig
-                 * WorkerInfo
-                 */
-
-                if (line.contains("values:")) {
+                } else if (line.contains("values:")) {
+                    // Is this configuration
                     Utils.processConfigurationBlock(line, reader, configMap);
+                } else {
+                    // Throw it into "unclassified"
+                    unclassified.add(line);
                 }
-
-                /*
-                if (line.contains("ProducerConfig values:")) {
-                    if (!isProducerConfigStored) {
-                        LOG.info("Found Replicator Producer config" + line);
-                        line = reader.readLine();
-                        while (!line.contains("(org.apache.kafka.clients.producer.ProducerConfig)")) {
-                            producerConfig.add(line);
-                            line = reader.readLine();
-                        }
-                    }
-                    isProducerConfigStored = true;
-                }
-                if (line.contains("ConsumerConfig values:")) {
-                    if (!isConsumerConfigStored) {
-                        LOG.info("Found Replicator Consumer config" + line);
-                        line = reader.readLine();
-                        while (!line.contains("(org.apache.kafka.clients.consumer.ConsumerConfig)")) {
-                            consumerConfig.add(line);
-                            line = reader.readLine();
-                        }
-                    }
-                    isConsumerConfigStored = true;
-                }
-
-
-                if (line.contains("AdminClientConfig values:")) {
-                    if (!isAdminClientConfigStored) {
-                        LOG.info("Found Replicator Admin Client config" + line);
-                        line = reader.readLine();
-                        while (!line.contains("(org.apache.kafka.clients.admin.AdminClientConfig)")) {
-                            adminClientConfig.add(line);
-                            line = reader.readLine();
-                        }
-                    }
-                    isAdminClientConfigStored = true;
-                }
-
-                if (line.contains("SourceConnectorConfig values:")) {
-                    if (!isSourceConnectorConfigStored) {
-                        LOG.info("Found Replicator Source Connector config" + line);
-                        line = reader.readLine();
-                        while (!line.contains("(org.apache.kafka.connect.runtime.SourceConnectorConfig)")) {
-                            sourceConnectorConfig.add(line);
-                            line = reader.readLine();
-                        }
-                    }
-                    isSourceConnectorConfigStored = true;
-                } */
-
 
                 // Is Replicator logging Array information?
                 Utils.processArrayFromLine(line, arr);
 
-                //LOG.info(line);
-                // read next line
-
+                // and move on to the next line
                 line = reader.readLine();
             }
 
-            LOG.info("Total WARN level messages: " + warns);
-            LOG.info("Total Assignment messages: " + assigns);
-            for (Object s: configMap.keySet()){
-                //LOG.info("Config for: "+ s + configMap.get(s).toString());
-                LOG.info("Config for: "+ s + " in map");
+            LOG.info("Total Consumer messages: " + consumer.size());
+            LOG.info("Total Producer messages: " + producer.size());
+            LOG.info("Total WorkerTask messages: " + workerTask.size());
+            LOG.info("Total WARN level messages: " + warns.size());
+            LOG.info("Total Assignment messages: " + assigns.size());
+            LOG.info("Total Unclassified messages: " + unclassified.size());
+            for (Object s : configMap.keySet()) {
+                LOG.info("Config for: " + s + configMap.get(s).toString());
             }
 
             reader.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("Exception Caught: " + e.getMessage(), e);
         }
-
-
-        /*
-        LOG.info(arr1);
-        LOG.info("L"+ arr1.split(",").length);
-        LOG.info("L"+ arr1.split(",")[1]);
-        for (String s : arr1.split(",")){
-            //LOG.info("n:"+s);
-        } */
     }
 }

@@ -15,6 +15,23 @@ public class Utils {
         return StringUtils.substringAfter(line, level);
     }
 
+    /** To get this list run: grep "values:" /var/log/kafka/connect-distributed.log | cut -d " " -f4 | sort | uniq
+     * AbstractConfig
+     * AdminClientConfig
+     * ConnectorConfig
+     * ConsumerConfig
+     * ConsumerOffsetsTranslatorConfig
+     * DistributedConfig
+     * EnrichedConnectorConfig
+     * JsonConverterConfig
+     * MonitoringInterceptorConfig
+     * ProducerConfig
+     * ReplicatorSourceConnectorConfig
+     * ReplicatorSourceTaskConfig
+     * SourceConnectorConfig
+     * TaskConfig
+     * WorkerInfo
+     */
     protected static void processConfigurationBlock(String startingLine, BufferedReader reader, Map configMap) throws IOException {
         // Get the specific value (as item)
         String l2 = Utils.lineAfterLogLevel(startingLine, "INFO");
@@ -25,7 +42,7 @@ public class Utils {
 
         // Add to the Map if necessary
         if (!configMap.containsKey(item)) {
-            LOG.info("Start Marker: " + item);
+            LOG.debug("Start Marker: " + item);
             LOG.debug("End Marker should be:" + endMarker);
             LOG.debug("First Line of Config: "+subsequentLine);
 
@@ -35,40 +52,9 @@ public class Utils {
                 subsequentLine = reader.readLine();
             }
             configMap.put(item, configArray);
-            LOG.info("Last Line of Config: "+subsequentLine);
+            LOG.debug("Last Line of Config: "+subsequentLine);
         }
 
-        /*
-        int counter = 0;
-
-
-        // Add to the Map if necessary
-        if (!configMap.containsKey(item)) {
-            LOG.info("Start Marker: " + item);
-            LOG.info("start at" + line);
-            //List configArray = new ArrayList();
-            //LOG.debug("Adding Configuration for: " + item);
-                        /*
-                        LOG.info(line);
-                        while (!line.contains(item) || counter < 150){
-                            //line != null &&
-                            ++counter;
-                            LOG.info("adding: "+line);
-                            configArray.add(line);
-                            line = reader.readLine();
-                        }
-
-
-            while (!StringUtils.contains(line, item)) {
-                line = reader.readLine();
-            }
-
-        }
-                        while (!StringUtils.endsWith(line, item+")")) {
-                            line = reader.readLine();
-                        }
-        LOG.info("done at"+line);
-    } */
     }
     protected static void processArrayFromLine(String line, String[] arr){
         // TODO - fine for now - but should handle other log levels
