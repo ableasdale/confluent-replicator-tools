@@ -1,8 +1,5 @@
-import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.PropertiesConfiguration;
-import org.apache.commons.configuration2.builder.BasicConfigurationBuilder;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
-import org.apache.commons.configuration2.builder.fluent.Configurations;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
 import org.apache.commons.configuration2.ex.ConfigurationException;
@@ -11,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
@@ -22,8 +18,7 @@ public class InspectLog {
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     public static void main(String[] args) {
-
-        //Configurations configs = new Configurations();
+        
         PropertiesConfiguration config = null;
         try
         {
@@ -51,22 +46,25 @@ public class InspectLog {
         }
 
         BufferedReader reader;
-        String[] arr = config.getStringArray("topiclist");
-        List arr2 = config.getList("topiclist");
-        LOG.info("ARR?: "+arr.length);
-        LOG.info("arr2: "+arr2.size());
 
         try {
+            int warns = 0;
             reader = new BufferedReader(new FileReader(config.getString("logfile")));
             String line = reader.readLine();
+            String[] arr = config.getStringArray("topiclist");
 
             while (line != null) {
                 // Flag WARNs
-                if(line.contains("WARN")){
-                    LOG.warn("WARN!");
+                if(line.contains("WARN")) {
+                    if (!line.contains("was supplied but isn't a known config") && !line.contains("Error registering AppInfo mbean")) {
+                        ++warns;
+                        LOG.warn(line);
+                    }
                 }
 
-                // computing task topic partition assignments
+                if(line.contains("computing task topic partition assignments")) {
+                    LOG.info("assignment detected");
+                }
 
                 //LOG.info(StringUtils.substringAfter(line, "INFO"));
                 String line2 = StringUtils.substringAfter(line, "INFO");
@@ -75,7 +73,7 @@ public class InspectLog {
                     String items = StringUtils.substringBetween(line2, "[","]");
                     if(items.contains(",")){
                         //LOG.info(line);
-                        LOG.info("Items: "+ items.split(",").length);
+                        //LOG.info("Items: "+ items.split(",").length);
                         //LOG.info("?"+StringUtils.containsAny(items, arr));
 
                         for (String s : arr){
@@ -95,6 +93,7 @@ public class InspectLog {
                 line = reader.readLine();
             }
 
+            LOG.info ("Total WARN level messages: "+warns);
             reader.close();
         } catch (IOException e) {
             e.printStackTrace();
