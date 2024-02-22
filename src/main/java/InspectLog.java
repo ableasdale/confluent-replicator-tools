@@ -18,7 +18,7 @@ public class InspectLog {
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     public static void main(String[] args) {
-        
+
         PropertiesConfiguration config = null;
         try
         {
@@ -49,6 +49,7 @@ public class InspectLog {
 
         try {
             int warns = 0;
+            int assigns = 0;
             reader = new BufferedReader(new FileReader(config.getString("logfile")));
             String line = reader.readLine();
             String[] arr = config.getStringArray("topiclist");
@@ -63,30 +64,18 @@ public class InspectLog {
                 }
 
                 if(line.contains("computing task topic partition assignments")) {
+                    ++assigns;
                     LOG.info("assignment detected");
                 }
 
-                //LOG.info(StringUtils.substringAfter(line, "INFO"));
-                String line2 = StringUtils.substringAfter(line, "INFO");
-
-                if(line2.contains("[") && line2.contains("]")){
-                    String items = StringUtils.substringBetween(line2, "[","]");
-                    if(items.contains(",")){
-                        //LOG.info(line);
-                        //LOG.info("Items: "+ items.split(",").length);
-                        //LOG.info("?"+StringUtils.containsAny(items, arr));
-
-                        for (String s : arr){
-                            //LOG.info("?"+StringUtils.contains(items, s));
-                            if (!StringUtils.contains(items, s)) {
-                                //LOG.info("nope" + s);
-                            }
-                        }
-                        //LOG.info(items);
-
-                    }
-
+                if(line.contains("Found matching topics")){
+                    LOG.debug("matching topics logged in an array..");
+                    Utils.processArrayFromLine(line,arr);
                 }
+
+                // Is Replicator logging Array information?
+                Utils.processArrayFromLine(line,arr);
+
                 //LOG.info(line);
                 // read next line
 
@@ -94,6 +83,7 @@ public class InspectLog {
             }
 
             LOG.info ("Total WARN level messages: "+warns);
+            LOG.info ("Total Assignment messages: "+assigns);
             reader.close();
         } catch (IOException e) {
             e.printStackTrace();
