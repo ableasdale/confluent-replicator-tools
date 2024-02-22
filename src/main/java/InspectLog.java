@@ -11,8 +11,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class InspectLog {
 
@@ -49,15 +48,9 @@ public class InspectLog {
             //int lineno = 1;
             int warns = 0;
             int assigns = 0;
-            boolean isProducerConfigStored = false;
-            boolean isConsumerConfigStored = false;
-            boolean isAdminClientConfigStored = false;
-            boolean isSourceConnectorConfigStored = false;
 
-            List producerConfig = new ArrayList<String>();
-            List consumerConfig = new ArrayList<String>();
-            List adminClientConfig = new ArrayList<String>();
-            List sourceConnectorConfig = new ArrayList<String>();
+            Map configMap = new HashMap<String, List>();
+
             reader = new BufferedReader(new FileReader(config.getString("logfile")));
             String line = reader.readLine();
             String[] arr = config.getStringArray("topiclist");
@@ -81,7 +74,7 @@ public class InspectLog {
                     Utils.processArrayFromLine(line, arr);
                 }
 
-                /**
+                /** To get this list run: grep "values:" /var/log/kafka/connect-distributed.log | cut -d " " -f4 | sort | uniq
                  * AbstractConfig
                  * AdminClientConfig
                  * ConnectorConfig
@@ -99,7 +92,11 @@ public class InspectLog {
                  * WorkerInfo
                  */
 
-                
+                if (line.contains("values:")) {
+                    Utils.processConfigurationBlock(line, reader, configMap);
+                }
+
+                /*
                 if (line.contains("ProducerConfig values:")) {
                     if (!isProducerConfigStored) {
                         LOG.info("Found Replicator Producer config" + line);
@@ -146,7 +143,7 @@ public class InspectLog {
                         }
                     }
                     isSourceConnectorConfigStored = true;
-                }
+                } */
 
 
                 // Is Replicator logging Array information?
@@ -160,9 +157,11 @@ public class InspectLog {
 
             LOG.info("Total WARN level messages: " + warns);
             LOG.info("Total Assignment messages: " + assigns);
-            LOG.info("Producer: " + producerConfig.toString());
-            LOG.info("Consumer: " + consumerConfig.toString());
-            LOG.info("Admin Client: " + adminClientConfig.toString());
+            for (Object s: configMap.keySet()){
+                //LOG.info("Config for: "+ s + configMap.get(s).toString());
+                LOG.info("Config for: "+ s + " in map");
+            }
+
             reader.close();
         } catch (IOException e) {
             e.printStackTrace();
