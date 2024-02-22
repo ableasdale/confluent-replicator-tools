@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 
 public class InspectLog {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     public static void main(String[] args) {
