@@ -16,6 +16,7 @@ public class LogDataProvider {
     //private static String SELECTED_KAFKA_CLUSTER;    private static String KCAT_VERSION = getKCatVersion();
     //private final String CONFLUENT_VERSION = Utils.runCmd("confluent --version");    public static String KAFKA_CLUSTER_JSON_LIST = getKafkaClusters(false);
     private static Map CONFIGS;
+    private static Map LOGS;
 
     //public static Map KAFKA_CLUSTER_LIST = getKafkaClusterMap(false);
     private LogDataProvider() {
@@ -72,6 +73,13 @@ public class LogDataProvider {
     }
     public static void setConfigs(Map m) {
         getInstance().CONFIGS = m;
+    }
+
+    public static Map getLogs() {
+        return getInstance().LOGS;
+    }
+    public static void setLogs(Map m) {
+        getInstance().LOGS = m;
     }
 
     /*

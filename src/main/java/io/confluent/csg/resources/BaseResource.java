@@ -58,6 +58,7 @@ public class BaseResource {
 //        map.put("ccloud", CCloudMetadataProvider.getConfluentCliVersion());
 //        map.put("kcat", CCloudMetadataProvider.getKCatVersion());
         map.put("configs", LogDataProvider.getConfigs());
+        map.put("logs", LogDataProvider.getLogs());
 //        map.put("env_id", CCloudMetadataProvider.getCurrentEnvironment());
 //        map.put("cluster_id", CCloudMetadataProvider.getCurrentKafkaCluster());
 //        map.put("kafka_clusters", CCloudMetadataProvider.getKafkaClusters(false));

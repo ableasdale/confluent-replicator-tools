@@ -101,6 +101,20 @@ public class InspectLog {
             LOG.info("Total Unclassified messages: " + unclassified.size());
             // Add the configMap..
             LogDataProvider.setConfigs(configMap);
+
+            // And add the other messages - should probably be refactored to start off with a map!
+            Map logMap = new HashMap<String, List>();
+            logMap.put("consumer", consumer);
+            logMap.put("producer", producer);
+            logMap.put("workerTask", workerTask);
+            logMap.put("warns", warns);
+            logMap.put("assigns", assigns);
+            logMap.put("unclassified", unclassified);
+            LogDataProvider.setLogs(logMap);
+
+
+
+
             for (Object s : configMap.keySet()) {
                 LOG.info("Config for: " + s + configMap.get(s).toString());
             }
