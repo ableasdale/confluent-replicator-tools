@@ -8,6 +8,7 @@ import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -43,24 +44,30 @@ public class InspectLog {
         BufferedReader reader;
 
         try {
-            List consumer = new ArrayList<>();
-            List producer = new ArrayList<>();
-            List workerTask = new ArrayList<>();
-            List assigns = new ArrayList();
-            List warns = new ArrayList();
-            List unclassified = new ArrayList();
-
+            Map logItemMap = new HashMap<String, List>();
             Map configMap = new HashMap<String, List>();
 
             reader = new BufferedReader(new FileReader(config.getString("logfile")));
             String line = reader.readLine();
             String[] arr = config.getStringArray("topiclist");
 
-            // TODO: Flag ERROR level messages?
+            // All the things that we currently classify
+            List consumer = new ArrayList<>();
+            List producer = new ArrayList<>();
+            List workerTask = new ArrayList<>();
+            List assigns = new ArrayList();
+            List warns = new ArrayList();
+            List unclassified = new ArrayList();
+            List errors = new ArrayList();
+            List unknownTopicOrPartition = new ArrayList();
 
             while (line != null) {
-                // Flag WARNs
-                if (line.contains("WARN")) {
+                if (line.contains("Received unknown topic or partition error in fetch for partition")) {
+                    unknownTopicOrPartition.add(line);
+                } else if (line.contains("ERROR")) {
+                    errors.add(line);
+                } else if (line.contains("WARN")) {
+                    // Flag Other WARNs
                     if (!line.contains("was supplied but isn't a known config") && !line.contains("Error registering AppInfo mbean")) {
                         warns.add(line);
                         //LOG.warn(line);
@@ -92,38 +99,35 @@ public class InspectLog {
                 // and move on to the next line
                 line = reader.readLine();
             }
+            // All done - collate results and add them to the LogDataProvider as a Map
+            logItemMap.put("consumer", consumer);
+            logItemMap.put("producer", producer);
+            logItemMap.put("workerTask", workerTask);
+            logItemMap.put("assigns", assigns);
+            logItemMap.put("warns", warns);
+            logItemMap.put("errors", errors);
+            logItemMap.put("unclassified", unclassified);
+            logItemMap.put("unknownTopicOrPartition", unknownTopicOrPartition);
+            LogDataProvider.setLogs(logItemMap);
 
-            LOG.info("Total Consumer messages: " + consumer.size());
-            LOG.info("Total Producer messages: " + producer.size());
-            LOG.info("Total WorkerTask messages: " + workerTask.size());
-            LOG.info("Total WARN level messages: " + warns.size());
-            LOG.info("Total Assignment messages: " + assigns.size());
-            LOG.info("Total Unclassified messages: " + unclassified.size());
+            LOG.info("File Parsing complete.");
+            // iterate over keys
+            for (Object s : logItemMap.keySet()) {
+                List l = (List) logItemMap.get(s);
+                LOG. info("Total "+ s + "messages " + l.size());
+            }
+
             // Add the configMap..
             LogDataProvider.setConfigs(configMap);
 
-            // And add the other messages - should probably be refactored to start off with a map!
-            Map logMap = new HashMap<String, List>();
-            logMap.put("consumer", consumer);
-            logMap.put("producer", producer);
-            logMap.put("workerTask", workerTask);
-            logMap.put("warns", warns);
-            logMap.put("assigns", assigns);
-            logMap.put("unclassified", unclassified);
-            LogDataProvider.setLogs(logMap);
-
-
-
-
             for (Object s : configMap.keySet()) {
-                LOG.info("Config for: " + s + configMap.get(s).toString());
+                LOG.debug("Config for: " + s + configMap.get(s).toString());
             }
 
             reader.close();
         } catch (IOException e) {
             LOG.error("Exception Caught: " + e.getMessage(), e);
         }
-
 
         // TODO - if nothing is parsed, Jersey starts anyway (and probably shouldn't!)
         // Now start Jersey:

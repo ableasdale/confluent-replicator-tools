@@ -16,9 +16,11 @@
                 <li><a class="dropdown-item" href="/logs/consumer">Replicator Consumer</a></li>
                 <li><a class="dropdown-item" href="/logs/producer">Replicator Producer</a></li>
                 <li><a class="dropdown-item" href="/logs/workerTask">Replicator Worker Tasks</a></li>
+                <li><a class="dropdown-item" href="/logs/errors">WARN Level Messages</a></li>
                 <li><a class="dropdown-item" href="/logs/warns">WARN Level Messages</a></li>
                 <li><a class="dropdown-item" href="/logs/assigns">Partition Assign Messages</a></li>
                 <li><a class="dropdown-item" href="/logs/unclassified"><strong>Unclassified</strong> Messages</a></li>
+                <li><a class="dropdown-item" href="/logs/unknownTopicOrPartition">Unknown Topic or Partition Messages</a></li>
             </ul>
           </li>
           <li class="nav-item dropdown">
