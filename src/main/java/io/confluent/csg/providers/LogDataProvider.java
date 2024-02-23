@@ -14,6 +14,16 @@ public class LogDataProvider {
     private static Map LOGS;
     private static Map LOG_SIZES;
     private static PropertiesConfiguration CONFIG = null;
+    private static String FILENAME;
+
+
+    public void setFilename(String s){
+        FILENAME = s;
+    }
+
+    public String getFilename(){
+        return FILENAME;
+    }
 
     public void setConfig(PropertiesConfiguration pc){
         CONFIG = pc;

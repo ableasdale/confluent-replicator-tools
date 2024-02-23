@@ -101,10 +101,11 @@ public class FileProcessManager {
                 LOG. info("Total "+ s + "messages " + l.size());
             }
 
-            // Add everything to the LogDataProvider, so it's available in Jersey/Freemarker..
+            // Finally, we will add everything to the LogDataProvider, so it's available in Jersey/Freemarker..
             LogDataProvider.getInstance().setConfigs(configMap);
             LogDataProvider.getInstance().setLogs(logItemMap);
             LogDataProvider.getInstance().setLogSizeMap(logSizeMap);
+            LogDataProvider.getInstance().setFilename(filename);
 
             for (Object s : configMap.keySet()) {
                 LOG.debug("Config for: " + s + configMap.get(s).toString());
@@ -121,6 +122,6 @@ public class FileProcessManager {
         el.setErrorLogTxt(IOUtils.readLines(new InputStreamReader(is, Charset.forName("UTF-8"))));
         processErrorLog(el);
         LOG.info(MessageFormat.format("Completed processing ErrorLog file: {0}", filename)); */
-        
+
     }
 }

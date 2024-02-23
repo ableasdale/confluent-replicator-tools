@@ -52,6 +52,7 @@ public class Upload extends BaseResource {
             LOG.error(MessageFormat.format("IO Exception caught processing file {0}: {1}", filePath, e.getMessage()));
         }
         return Response.ok().build();
+        //return Response.temporaryRedirect(uriInfo.getBaseUri()).build();
     }
 
 }

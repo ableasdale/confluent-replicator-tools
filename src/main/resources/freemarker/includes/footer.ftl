@@ -14,6 +14,16 @@
  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js" integrity="sha512-8RnEqURPUc5aqFEN04aQEiPlSAdE0jlFS/9iGgUyNtwFnSKCXhmB6ZTNl7LnDtDWKabJIASzXrzD0K+LYexU9g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/properties/properties.min.js" integrity="sha512-P4OaO+QWj1wPRsdkEHlrgkx+a7qp6nUC8rI6dS/0/HPjHtlEmYfiambxowYa/UfqTxyNUnwTyPt5U6l1GO76yw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
  <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.js" integrity="sha512-U2WE1ktpMTuRBPoCFDzomoIorbOyUv0sP8B+INA3EzNAhehbzED1rOJg6bCqPf/Tuposxb5ja/MAUnC8THSbLQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+ <script>
+    var editor2 = CodeMirror.fromTextArea(log, {
+      lineNumbers: true
+      //mode: "properties"
+      //mode: {name: "javascript", json: true}
+    });
+    editor2.setSize("100%", 650);
+ </script>
+ <!-- codemirror for properties files -->
   <script>
     var editor = CodeMirror.fromTextArea(textarea, {
       lineNumbers: true,
@@ -22,6 +32,7 @@
     });
     editor.setSize("100%", "100%");
   </script>
+  <!-- DROPZONE -->
   <script>
           $(function () {
               Dropzone.options.dropzone = {

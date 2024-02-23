@@ -130,6 +130,7 @@ public class InspectLog {
             LogDataProvider.setConfigs(configMap);
             LogDataProvider.setLogs(logItemMap);
             LogDataProvider.setLogSizeMap(logSizeMap);
+            LogDataProvider.getInstance().setFilename(config.getString("logfile"));
 
             for (Object s : configMap.keySet()) {
                 LOG.debug("Config for: " + s + configMap.get(s).toString());

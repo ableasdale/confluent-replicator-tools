@@ -13,6 +13,7 @@ import java.lang.invoke.MethodHandles;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class BaseResource {
@@ -58,9 +59,12 @@ public class BaseResource {
     protected Map<String, Object> createModel() {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("title", "Dashboard and overview");
-        map.put("configs", LogDataProvider.getConfigs());
-        map.put("logs", LogDataProvider.getLogs());
-        map.put("logsizes", LogDataProvider.getLogSizeMap());
+        map.put("configs", LogDataProvider.getInstance().getConfigs());
+        map.put("logs", LogDataProvider.getInstance().getLogs());
+        map.put("logsizes", LogDataProvider.getInstance().getLogSizeMap());
+        map.put("filename", LogDataProvider.getInstance().getFilename());
+        List list = (List) LogDataProvider.getInstance().getLogs().get("workerTask");
+        map.put("bigfile", String.join(", ", list));
         return map;
     }
 

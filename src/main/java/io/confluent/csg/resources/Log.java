@@ -26,7 +26,8 @@ public class Log extends BaseResource {
     @Produces(MediaType.TEXT_HTML)
     public Viewable getLogFile(@PathParam("logfile") String name) {
         LOG.debug("getLogFile() :: Rendering view");
-        Map view = createModel(name); // TODO - add it here?
+        Map view = createModel(); // TODO - add it here?
+        view.put("name", name);
         view.put("file", LogDataProvider.getLogs().get(name));
         view.put("toast_heading", "Log View");
         view.put("toast_notification", "Viewing Logs for <strong>"+name+"</strong>");
