@@ -1,3 +1,5 @@
+package io.confluent.csg.util;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -5,13 +7,20 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class Utils {
+
+    /*,io.swagger.jaxrs.listing"; */
+    public static String returnExceptionString(final Exception e) {
+        return MessageFormat.format("{0} caught: {1}", e.getClass().getName(),
+                e);
+    }
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-    protected static String lineAfterLogLevel(String line, String level) {
+    public static String lineAfterLogLevel(String line, String level) {
         return StringUtils.substringAfter(line, level);
     }
 
@@ -32,7 +41,7 @@ public class Utils {
      * TaskConfig
      * WorkerInfo
      */
-    protected static void processConfigurationBlock(String startingLine, BufferedReader reader, Map configMap) throws IOException {
+    public static void processConfigurationBlock(String startingLine, BufferedReader reader, Map configMap) throws IOException {
         // Get the specific value (as item)
         String l2 = Utils.lineAfterLogLevel(startingLine, "INFO");
         String item = StringUtils.substringBefore(l2.trim(), "values:").trim();
@@ -56,7 +65,7 @@ public class Utils {
         }
 
     }
-    protected static void processArrayFromLine(String line, String[] arr){
+    public static void processArrayFromLine(String line, String[] arr){
         // TODO - fine for now - but should handle other log levels
         String line2 = lineAfterLogLevel(line, "INFO");
         if(line2 != null && line2.contains("[") && line2.contains("]")){

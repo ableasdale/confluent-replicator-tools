@@ -1,3 +1,6 @@
+import io.confluent.csg.providers.JerseyServer;
+import io.confluent.csg.providers.LogDataProvider;
+import io.confluent.csg.util.Utils;
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
@@ -96,6 +99,8 @@ public class InspectLog {
             LOG.info("Total WARN level messages: " + warns.size());
             LOG.info("Total Assignment messages: " + assigns.size());
             LOG.info("Total Unclassified messages: " + unclassified.size());
+            // Add the configMap..
+            LogDataProvider.setConfigs(configMap);
             for (Object s : configMap.keySet()) {
                 LOG.info("Config for: " + s + configMap.get(s).toString());
             }
@@ -104,5 +109,10 @@ public class InspectLog {
         } catch (IOException e) {
             LOG.error("Exception Caught: " + e.getMessage(), e);
         }
+
+        // Now start Jersey:
+        final Thread t = new JerseyServer();
+        LOG.info("Starting JerseyServer");
+        t.start();
     }
 }
