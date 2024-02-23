@@ -28,7 +28,7 @@ public class Config extends BaseResource {
     public Viewable getConfigFile(@PathParam("config") String name) {
         LOG.debug("getConfigFile() :: Rendering view");
         Map view = createModel(name); // TODO - add it here?
-        view.put("file", LogDataProvider.getConfigs().get(name)); //.toString()
+        view.put("file", LogDataProvider.getConfigs().get(name));
         view.put("toast_heading", "Configuration");
         view.put("toast_notification", "Configuration for <strong>"+name+"</strong>");
         return new Viewable("/configs", view);

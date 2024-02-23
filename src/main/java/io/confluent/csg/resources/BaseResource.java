@@ -55,34 +55,17 @@ public class BaseResource {
     protected Map<String, Object> createModel() {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("title", "Dashboard and overview");
-//        map.put("ccloud", CCloudMetadataProvider.getConfluentCliVersion());
-//        map.put("kcat", CCloudMetadataProvider.getKCatVersion());
         map.put("configs", LogDataProvider.getConfigs());
         map.put("logs", LogDataProvider.getLogs());
-//        map.put("env_id", CCloudMetadataProvider.getCurrentEnvironment());
-//        map.put("cluster_id", CCloudMetadataProvider.getCurrentKafkaCluster());
-//        map.put("kafka_clusters", CCloudMetadataProvider.getKafkaClusters(false));
-//        map.put("kafka_clusters_nav", CCloudMetadataProvider.getKafkaClusterMap(false));
-//        map.put("system_info", Consts.SYSTEM_INFORMATION);
-//        map.put("java_info", Consts.JAVA_INFORMATION);
-        // map.put("path", PropertiesMap.getInstance().get("path"));
         return map;
     }
+
 
     protected Map<String, Object> createModel(String name) {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("name", name);
         map.put("title", "Dashboard and overview");
-//        map.put("ccloud", CCloudMetadataProvider.getConfluentCliVersion());
-//        map.put("kcat", CCloudMetadataProvider.getKCatVersion());
         map.put("configs", LogDataProvider.getConfigs());
-//        map.put("env_id", CCloudMetadataProvider.getCurrentEnvironment());
-//        map.put("cluster_id", CCloudMetadataProvider.getCurrentKafkaCluster());
-//        map.put("kafka_clusters", CCloudMetadataProvider.getKafkaClusters(false));
-//        map.put("kafka_clusters_nav", CCloudMetadataProvider.getKafkaClusterMap(false));
-//        map.put("system_info", Consts.SYSTEM_INFORMATION);
-//        map.put("java_info", Consts.JAVA_INFORMATION);
-        // map.put("path", PropertiesMap.getInstance().get("path"));
         return map;
     }
 
