@@ -4,7 +4,7 @@ An application and tool to help you work through large Replicator logs, designed
 
 ## Getting Started
 
-Start by running the main class `InspectLog`:
+Start by running the main class `io.confluent.csg.Server`:
 
 ```bash
 gradle run

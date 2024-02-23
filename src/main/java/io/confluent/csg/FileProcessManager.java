@@ -18,7 +18,6 @@ public class FileProcessManager {
     public void processLogFile(InputStream is, String filename) throws IOException {
 
         BufferedReader reader;
-
         try {
             Map logItemMap = new HashMap<String, List>();
             Map configMap = new HashMap<String, List>();
@@ -28,9 +27,13 @@ public class FileProcessManager {
             String[] arr = LogDataProvider.getInstance().getConfig().getStringArray("topiclist");
 
             // All the things that we currently classify
-            List consumer = new ArrayList<>();
-            List producer = new ArrayList<>();
-            List workerTask = new ArrayList<>();
+            List license = new ArrayList();
+            List groupCoordinator = new ArrayList();
+            List metadata = new ArrayList();
+            List tls = new ArrayList();
+            List consumer = new ArrayList();
+            List producer = new ArrayList();
+            List workerTask = new ArrayList();
             List assigns = new ArrayList();
             List warns = new ArrayList();
             List unclassified = new ArrayList();
@@ -40,22 +43,34 @@ public class FileProcessManager {
             List kerberosTGT = new ArrayList();
 
             while (line != null) {
-                if (line.contains("Received unknown topic or partition error in fetch for partition")) {
+                if (line.contains("License for control-center expires in")) {
+                    license.add(line);
+                } else if (line.contains("Group coordinator") || line.contains("Discovered group coordinator")
+                || line.contains("internals.AbstractCoordinator") || line.contains("distributed.DistributedHerder")
+                || line.contains("distributed.WorkerCoordinator")
+                ) {
+                    groupCoordinator.add(line);
+                } else if (line.contains("Metadata update failed") || line.contains("fetchMetadata")) {
+                    metadata.add(line);
+                } else if (line.contains("INFO x509=")) {
+                    tls.add(line);
+                } else if (line.contains("Received unknown topic or partition error in fetch for partition")) {
                     unknownTopicOrPartition.add(line);
                 } else if (line.contains("ERROR")) {
                     errors.add(line);
                 } else if (line.contains("WARN")) {
-                    // Flag Other WARNs
                     if (!line.contains("was supplied but isn't a known config") && !line.contains("Error registering AppInfo mbean")) {
+                        // Flag Other WARNs
                         warns.add(line);
-                        //LOG.warn(line);
                     }
                 } else if (line.contains("INFO [Consumer")) {
                     consumer.add(line);
                 } else if (line.contains("INFO [Producer")) {
                     producer.add(line);
                 } else if (line.contains("INFO WorkerSourceTask")) {
-                    workerTask.add(line);
+                    if(!line.contains("flushing 0 outstanding messages for offset commit") && !line.contains("Committing offsets (org.apache.kafka.connect.runtime.WorkerSourceTask)")) {
+                        workerTask.add(line);
+                    }
                 } else if (line.contains("computing task topic partition assignments")) {
                     assigns.add(line);
                     // TODO
@@ -65,7 +80,7 @@ public class FileProcessManager {
                     Utils.processArrayFromLine(line, arr);
                 } else if (line.contains("schema registry")) {
                     schemaRegistry.add(line);
-                } else if (line.contains("TGT ")) {
+                } else if (line.contains("TGT ") || line.contains("Initiating logout for") || line.contains("Initiating re-login for")) {
                     kerberosTGT.add(line);
                 } else if (line.contains("values:")) {
                     // Is this configuration
@@ -82,6 +97,10 @@ public class FileProcessManager {
                 line = reader.readLine();
             }
             // All done - collate results and add them to the LogDataProvider as a Map
+            logItemMap.put("license", license);
+            logItemMap.put("groupCoordinator", groupCoordinator);
+            logItemMap.put("metadata", metadata);
+            logItemMap.put("tls", tls);
             logItemMap.put("consumer", consumer);
             logItemMap.put("producer", producer);
             logItemMap.put("workerTask", workerTask);

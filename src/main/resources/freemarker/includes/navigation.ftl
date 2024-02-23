@@ -13,6 +13,10 @@
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Log Messages</a>
             <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="/logs/license">C3 License Messages</a></li>
+                <li><a class="dropdown-item" href="/logs/groupCoordinator">Group Coordinator Messages</a></li>
+                <li><a class="dropdown-item" href="/logs/metadata">Metadata Messages</a></li>
+                <li><a class="dropdown-item" href="/logs/tls">TLS Messages</a></li>
                 <li><a class="dropdown-item" href="/logs/consumer">Replicator Consumer</a></li>
                 <li><a class="dropdown-item" href="/logs/producer">Replicator Producer</a></li>
                 <li><a class="dropdown-item" href="/logs/workerTask">Replicator Worker Tasks</a></li>
