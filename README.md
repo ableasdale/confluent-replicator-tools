@@ -24,3 +24,7 @@ Output from after the process has run:
 [2024-02-22 22:23:13,684] [INFO] Total Assignment messages: 6
 [2024-02-22 22:23:13,684] [INFO] Total Unclassified messages: 23343
 ```
+
+A Web UI is also available on port 9992 by defaut:
+
+![The Web UI](src/main/resources/assets/ui.png)
