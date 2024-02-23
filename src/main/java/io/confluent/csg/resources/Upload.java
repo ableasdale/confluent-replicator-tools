@@ -1,5 +1,6 @@
 package io.confluent.csg.resources;
 
+import io.confluent.csg.FileProcessManager;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -9,8 +10,10 @@ import org.glassfish.jersey.server.mvc.Viewable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.invoke.MethodHandles;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,13 +44,13 @@ public class Upload extends BaseResource {
         String filePath = contentDispositionHeader.getFileName();
 
         LOG.info(String.format("Handling the upload of a new ErrorLog / Messages file: %s", filePath));
-        /*
+
         FileProcessManager fpm = new FileProcessManager();
         try {
-            fpm.processUploadedFile(fileInputStream, filePath);
+            fpm.processLogFile(fileInputStream, filePath);
         } catch (IOException e) {
             LOG.error(MessageFormat.format("IO Exception caught processing file {0}: {1}", filePath, e.getMessage()));
-        } */
+        }
         return Response.ok().build();
     }
 

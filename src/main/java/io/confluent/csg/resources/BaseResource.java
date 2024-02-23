@@ -4,6 +4,7 @@ import io.confluent.csg.providers.LogDataProvider;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
+import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.glassfish.jersey.server.mvc.Viewable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,8 @@ import java.util.Map;
 public class BaseResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
+
 
     @Context
     protected UriInfo uriInfo;
@@ -57,6 +60,7 @@ public class BaseResource {
         map.put("title", "Dashboard and overview");
         map.put("configs", LogDataProvider.getConfigs());
         map.put("logs", LogDataProvider.getLogs());
+        map.put("logsizes", LogDataProvider.getLogSizeMap());
         return map;
     }
 

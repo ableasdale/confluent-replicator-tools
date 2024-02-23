@@ -1,5 +1,6 @@
 package io.confluent.csg.providers;
 
+import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,6 +12,16 @@ public class LogDataProvider {
 
     private static Map CONFIGS;
     private static Map LOGS;
+    private static Map LOG_SIZES;
+    private static PropertiesConfiguration CONFIG = null;
+
+    public void setConfig(PropertiesConfiguration pc){
+        CONFIG = pc;
+    }
+
+    public PropertiesConfiguration getConfig(){
+        return CONFIG;
+    }
 
     private LogDataProvider() {
         LOG.debug("LogDataProvider :: instantiating");
@@ -34,6 +45,12 @@ public class LogDataProvider {
 
     public static void setLogs(Map m) {
         getInstance().LOGS = m;
+    }
+
+    public static Map getLogSizeMap() {return getInstance().LOG_SIZES;}
+
+    public static void setLogSizeMap(Map m) {
+        getInstance().LOG_SIZES = m;
     }
 
     private static class LazyHolder {
