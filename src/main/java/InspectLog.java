@@ -110,6 +110,8 @@ public class InspectLog {
             LOG.error("Exception Caught: " + e.getMessage(), e);
         }
 
+
+        // TODO - if nothing is parsed, Jersey starts anyway (and probably shouldn't!)
         // Now start Jersey:
         final Thread t = new JerseyServer();
         LOG.info("Starting JerseyServer");

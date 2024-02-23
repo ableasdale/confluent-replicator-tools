@@ -26,7 +26,7 @@ public class Root extends BaseResource {
     @GET
     @Produces(MediaType.TEXT_HTML)
     public Viewable getDashboard() {
-        LOG.info("getDashboard() :: Rendering view");
+        LOG.debug("getDashboard() :: Rendering view");
         Map view = createModel();
         view.put("toast_heading", "Dashboard");
         view.put("toast_notification", "Configuration: Everything looks good");
