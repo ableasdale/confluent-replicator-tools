@@ -1,8 +1,10 @@
-# Replicator Tools
+# Confluent Replicator Tools
 
-A tool to help you work through Replicator logs, designed to run through large `connect-distributed.log` files in an attempt to summarise what is going on with all the arrays that Replicator maintains (and emits log messages around).
+An application and tool to help you work through large Replicator logs, designed to run through large `connect-distributed.log` files in an attempt to summarise what is going on with all the messages, configuration items and arrays that Replicator maintains (and emits log messages around).
 
-To run the main class `InspectLog`:
+## Getting Started
+
+Start by running the main class `InspectLog`:
 
 ```bash
 gradle run
