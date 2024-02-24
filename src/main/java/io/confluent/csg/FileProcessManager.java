@@ -28,6 +28,8 @@ public class FileProcessManager {
 
             // All the things that we currently classify
             List license = new ArrayList();
+            List kafkaInfo = new ArrayList();
+            List workerState = new ArrayList<>();
             List groupCoordinator = new ArrayList();
             List metadata = new ArrayList();
             List tls = new ArrayList();
@@ -45,6 +47,13 @@ public class FileProcessManager {
             while (line != null) {
                 if (line.contains("License for control-center expires in")) {
                     license.add(line);
+                } else if (line.contains("INFO Creating task ")) {
+                    // TODO - extract full stack!
+                } else if (line.contains("INFO Kafka")) {
+                    // TODO - grab the Kafka version at the same time
+                    kafkaInfo.add(line);
+                } else if (line.contains("Setting connector")) {
+                    workerState.add(line);
                 } else if (line.contains("Group coordinator") || line.contains("Discovered group coordinator")
                 || line.contains("internals.AbstractCoordinator") || line.contains("distributed.DistributedHerder")
                 || line.contains("distributed.WorkerCoordinator")
@@ -73,8 +82,6 @@ public class FileProcessManager {
                     }
                 } else if (line.contains("computing task topic partition assignments")) {
                     assigns.add(line);
-                    // TODO
-                    //LOG.info("assignment detected");
                 } else if (line.contains("Found matching topics")) {
                     LOG.debug("matching topics logged in an array..");
                     Utils.processArrayFromLine(line, arr);
@@ -98,6 +105,8 @@ public class FileProcessManager {
             }
             // All done - collate results and add them to the LogDataProvider as a Map
             logItemMap.put("license", license);
+            logItemMap.put("kafkaInfo", kafkaInfo);
+            logItemMap.put("workerState", workerState);
             logItemMap.put("groupCoordinator", groupCoordinator);
             logItemMap.put("metadata", metadata);
             logItemMap.put("tls", tls);
