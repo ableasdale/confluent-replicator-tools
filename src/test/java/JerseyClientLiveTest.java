@@ -6,11 +6,14 @@ import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import org.glassfish.grizzly.compression.zip.GZipEncoder;
+
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.ClientResponse;
+import org.glassfish.jersey.client.filter.EncodingFeature;
 import org.glassfish.jersey.client.filter.EncodingFilter;
+import org.glassfish.jersey.message.DeflateEncoder;
+import org.glassfish.jersey.message.GZipEncoder;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -81,18 +84,16 @@ public class JerseyClientLiveTest {
 
      */
     @Test
-    public void getLargeFileReq() {
-
+    public void getLargeTxtFileAsChunkedWithGzip() {
 
         Client client = ClientBuilder.newClient(new ClientConfig());
+        client.register(new EncodingFeature("gzip", GZipEncoder.class));
         client.property(ClientProperties.REQUEST_ENTITY_PROCESSING, "CHUNKED");
+
         WebTarget target = client.target("http://localhost:9992/");
         Response response = target.path("files").
-                register(EncodingFilter.class).
-                register(GZipEncoder.class).
                 path("filename").
-                // TODO - this isn't quite right yet - the request needs to state that it accepts gzip for this test to work
-                property(ClientProperties.USE_ENCODING, "gzip").
+                request().
                 accept(HttpHeaders.ACCEPT_ENCODING, "gzip").
                 accept(MediaType.APPLICATION_OCTET_STREAM).
                 get(Response.class);
@@ -101,8 +102,33 @@ public class JerseyClientLiveTest {
         OutputStream fileOutputStream = new FileOutputStream(outFile);
         InputStream fileInputStream = target.request().get(InputStream.class);
         writeFile(fileInputStream, fileOutputStream); */
-        //return target.toString();
+
         assertEquals("gzip", response.getHeaderString("Content-Encoding"));
+        assertEquals(MediaType.APPLICATION_OCTET_STREAM, response.getHeaderString("Content-Type"));
+        assertEquals("chunked", response.getHeaderString("Transfer-Encoding"));
+        assertEquals(HTTP_OK, response.getStatus());
+    }
+
+
+    /**
+     * Chunked file with Deflate compression encoding
+     */
+    @Test
+    public void getLargeTxtFileAsChunkedWithDeflate() {
+
+        Client client = ClientBuilder.newClient(new ClientConfig());
+        client.register(new EncodingFeature("deflate", DeflateEncoder.class));
+        client.property(ClientProperties.REQUEST_ENTITY_PROCESSING, "CHUNKED");
+
+        WebTarget target = client.target("http://localhost:9992/");
+        Response response = target.path("files").
+                path("filename").
+                request().
+                accept(HttpHeaders.ACCEPT_ENCODING, "deflate").
+                accept(MediaType.APPLICATION_OCTET_STREAM).
+                get(Response.class);
+
+        assertEquals("deflate", response.getHeaderString("Content-Encoding"));
         assertEquals(MediaType.APPLICATION_OCTET_STREAM, response.getHeaderString("Content-Type"));
         assertEquals("chunked", response.getHeaderString("Transfer-Encoding"));
         assertEquals(HTTP_OK, response.getStatus());
