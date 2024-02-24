@@ -1,0 +1,7 @@
+testing http gzipped
+
+ 1000  curl --compressed -v -o - http://localhost:9992/logs/workerTask
+ 1001  curl -H "Accept-Encoding: gzip, deflate" http://localhost:9992/logs/workerTask
+
+Testing the client
+https://www.baeldung.com/jersey-jax-rs-client
