@@ -54,6 +54,8 @@ public class FileProcessManager {
                     kafkaInfo.add(line);
                 } else if (line.contains("Setting connector")) {
                     workerState.add(line);
+                } else if (line.contains("org.apache.kafka.connect.runtime.TransformationChain")) {
+                    // TODO - extract all lines between this and (org.apache.kafka.clients.producer.ProducerConfig)
                 } else if (line.contains("Group coordinator") || line.contains("Discovered group coordinator")
                 || line.contains("internals.AbstractCoordinator") || line.contains("distributed.DistributedHerder")
                 || line.contains("distributed.WorkerCoordinator")
