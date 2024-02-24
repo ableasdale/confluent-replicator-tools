@@ -28,7 +28,8 @@ public class PlaintextStreamer extends BaseResource {
             public void write(OutputStream output) throws IOException, WebApplicationException {
                 try
                 {
-                    java.nio.file.Path path = Paths.get("C:/temp/test.pdf");
+                    // TODO - hard coded
+                    java.nio.file.Path path = Paths.get("/Users/ableasdale/Downloads/connect-distributed.log");
                     byte[] data = Files.readAllBytes(path);
                     output.write(data);
                     output.flush();
