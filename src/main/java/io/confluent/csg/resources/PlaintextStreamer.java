@@ -11,6 +11,7 @@ import java.io.OutputStream;
 import java.lang.invoke.MethodHandles;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.MessageFormat;
 
 @Path("/files")
 public class PlaintextStreamer extends BaseResource {
@@ -21,8 +22,33 @@ public class PlaintextStreamer extends BaseResource {
     @Path("/{fileName}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
 
-    public StreamingOutput getFile(@PathParam("fileName") final String fileName)  throws Exception  {
-        //create instance of StreamingOutput here
+    public StreamingOutput getFile(@PathParam("fileName") final String fileName) {
+        LOG.info("retrieving file: "+fileName);
+        // ArrayList to file??
+        /*
+        FileWriter writer = new FileWriter("output.txt");
+        for(String str: arr) {
+            writer.write(str + System.lineSeparator());
+        }
+        writer.close(); */
+        /*
+        StreamingOutput streamingOutput = output -> {
+            try
+            {
+                //java.nio.file.Path path = Paths.get(fileName);
+                java.nio.file.Path path = Paths.get("/Users/ableasdale/Downloads/connect-distributed.log");
+                LOG.info("File: "+fileName);
+                byte[] data = Files.readAllBytes(path);
+                output.write(data);
+                output.flush();
+            }
+            catch (Exception e)
+            {
+                throw new WebApplicationException(MessageFormat.format("File {0} not found", fileName));
+            }
+        };
+        return streamingOutput; */
+
         StreamingOutput streamingOutput = new StreamingOutput() {
             @Override
             public void write(OutputStream output) throws IOException, WebApplicationException {
@@ -42,7 +68,7 @@ public class PlaintextStreamer extends BaseResource {
         };
         return streamingOutput;
     }
-    /*
+    /* For a downloadable item - we will set the Content-Disposition header with a filename
     return Response
 	            .ok(fileStream, MediaType.APPLICATION_OCTET_STREAM)
 	            .header("content-disposition","attachment; filename = myfile.pdf")

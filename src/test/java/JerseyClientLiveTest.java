@@ -16,12 +16,17 @@ import org.glassfish.jersey.message.DeflateEncoder;
 import org.glassfish.jersey.message.GZipEncoder;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JerseyClientLiveTest {
+
+    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     public static final int HTTP_CREATED = 201;
     public static final int NOT_ACCEPTABLE = 406;
@@ -97,6 +102,8 @@ public class JerseyClientLiveTest {
                 accept(HttpHeaders.ACCEPT_ENCODING, "gzip").
                 accept(MediaType.APPLICATION_OCTET_STREAM).
                 get(Response.class);
+        LOG.info("path:" + target.getUri().toString());
+
 
         /* TODO - Something like this will be useful for downloads
         OutputStream fileOutputStream = new FileOutputStream(outFile);
@@ -116,6 +123,14 @@ public class JerseyClientLiveTest {
     @Test
     public void getLargeTxtFileAsChunkedWithDeflate() {
 
+        // This DOES work: curl --compressed -v -o - http://localhost:9992/files/fn
+        /*
+        < HTTP/1.1 200 OK
+< Vary: Accept-Encoding
+< Content-Encoding: deflate
+< Content-Type: application/octet-stream
+< Transfer-Encoding: chunked
+         */
         Client client = ClientBuilder.newClient(new ClientConfig());
         client.register(new EncodingFeature("deflate", DeflateEncoder.class));
         client.property(ClientProperties.REQUEST_ENTITY_PROCESSING, "CHUNKED");
