@@ -41,6 +41,8 @@ dependencies {
     implementation group: 'org.glassfish.jersey.containers', name: 'jersey-container-servlet-core', version: '3.1.5'
     implementation group: 'org.glassfish.jersey.core', name: 'jersey-server', version: '3.1.5'
     implementation group: 'org.glassfish.jersey.core', name: 'jersey-client', version: '3.1.5'
+    // Trying to test with Apache HTTP Client
+    implementation 'org.apache.httpcomponents.client5:httpclient5:5.3.1'
 
 }
 
