@@ -56,13 +56,16 @@ public class PlaintextStreamer extends BaseResource {
                 {
                     // TODO - hard coded
                     java.nio.file.Path path = Paths.get("/Users/ableasdale/Downloads/connect-distributed.log");
+                    // java.nio.file.Path path = Paths.get("/Users/ableasdale/Downloads/connect-distributed.log");
+                    LOG.info("path"+path.toString());
                     byte[] data = Files.readAllBytes(path);
                     output.write(data);
                     output.flush();
                 }
                 catch (Exception e)
                 {
-                    throw new WebApplicationException("File Not Found !!");
+                    LOG.error("Error: ",e);
+                    //throw new WebApplicationException("File Not Found !!");
                 }
             }
         };
@@ -76,3 +79,5 @@ public class PlaintextStreamer extends BaseResource {
 	            https://howtodoinjava.com/jersey/jersey-streamingoutput/
      */
 }
+
+// https://stackoverflow.com/questions/48768006/jersey-an-i-o-error-has-occurred-while-writing-a-response-message
