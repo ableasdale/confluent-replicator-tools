@@ -15,6 +15,17 @@ import java.util.Map;
 public class FileProcessManager {
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
+    public void processLogFile(String filename){
+        try {
+            InputStream is = new FileInputStream(filename);
+            processLogFile(is, filename);
+        } catch (FileNotFoundException e) {
+            Utils.returnExceptionString(e);
+        } catch (IOException e) {
+            Utils.returnExceptionString(e);
+        }
+    }
+
     public void processLogFile(InputStream is, String filename) throws IOException {
 
         BufferedReader reader;

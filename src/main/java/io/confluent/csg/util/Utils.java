@@ -1,11 +1,18 @@
 package io.confluent.csg.util;
 
+import io.confluent.csg.FileProcessManager;
+import io.confluent.csg.providers.JerseyServer;
+import io.confluent.csg.providers.LogDataProvider;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
+import org.apache.commons.configuration2.builder.fluent.Parameters;
+import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.IOException;
+import java.io.*;
 import java.lang.invoke.MethodHandles;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -22,6 +29,38 @@ public class Utils {
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     public static String lineAfterLogLevel(String line, String level) {
         return StringUtils.substringAfter(line, level);
+    }
+
+    public static void startApplication(){
+        PropertiesConfiguration config = Utils.loadConfigurationFile();
+        FileProcessManager fpm = new FileProcessManager();
+        fpm.processLogFile(config.getString("logfile"));
+
+        // TODO - if nothing is parsed, Jersey starts anyway (and probably shouldn't!)
+        // Now start Jersey:
+        final Thread t = new JerseyServer();
+        LOG.info("Starting JerseyServer");
+        t.start();
+    }
+
+    public static PropertiesConfiguration loadConfigurationFile() {
+        PropertiesConfiguration config = null;
+        try {
+            Parameters params = new Parameters();
+            FileBasedConfigurationBuilder<PropertiesConfiguration> builder =
+                    new FileBasedConfigurationBuilder<>(
+                            PropertiesConfiguration.class)
+                            .configure(params.fileBased()
+                                    .setFileName("config.properties")
+                                    .setListDelimiterHandler(
+                                            new DefaultListDelimiterHandler(','))
+                                    .setThrowExceptionOnMissing(true));
+            config = builder.getConfiguration();
+        } catch (ConfigurationException cex) {
+            LOG.error(MessageFormat.format("Properties Configuration Exception Caught: {0}", cex.getMessage()), cex);
+        }
+        LogDataProvider.getInstance().setConfig(config);
+        return LogDataProvider.getInstance().getConfig();
     }
 
     /** To get this list run: grep "values:" /var/log/kafka/connect-distributed.log | cut -d " " -f4 | sort | uniq

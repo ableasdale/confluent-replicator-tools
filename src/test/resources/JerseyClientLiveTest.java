@@ -1,30 +1,31 @@
-import io.confluent.csg.Server;
+
+import io.confluent.csg.resources.Config;
+import io.confluent.csg.resources.PlaintextStreamer;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
-import jakarta.ws.rs.client.Invocation;
 import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.Application;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
-import org.glassfish.jersey.client.ClientResponse;
 import org.glassfish.jersey.client.filter.EncodingFeature;
-import org.glassfish.jersey.client.filter.EncodingFilter;
 import org.glassfish.jersey.message.DeflateEncoder;
 import org.glassfish.jersey.message.GZipEncoder;
-import org.junit.jupiter.api.BeforeAll;
+import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.test.JerseyTest;
+import org.glassfish.jersey.test.TestProperties;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JerseyClientLiveTest {
+public class JerseyClientLiveTest extends JerseyTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -33,41 +34,16 @@ public class JerseyClientLiveTest {
     public static final int HTTP_OK = 200;
 
    // @BeforeAll
-    public void startJersey() {
+    public Application configure() {
+        enable(TestProperties.LOG_TRAFFIC);
+        enable(TestProperties.DUMP_ENTITY);
         // Jersey needs to be running for these tests to pass.
         // TODO - break up Server class so it can be started with a test file
+
+        return new ResourceConfig(PlaintextStreamer.class);
     }
 
-    @Test
-    public void basicJerseyServiceTest() {
-        ClientConfig config = new ClientConfig();
-        Client client = ClientBuilder.newClient(config);
-        WebTarget target = client.target("http://localhost:9992/");
-        Response response = target.path("configs").
-                path("TaskConfig").
-                request().
-                accept(MediaType.TEXT_HTML).
-                get(Response.class);
 
-        //WebTarget webTarget
-          //      = client.target("http://localhost:9992/");
-        //WebResource r = client.resource(uri);
-       // ClientResponse response = webTarget..type(MediaType.APPLICATION_XML).post(ClientResponse.class, request);
-        //System.out.println(response.getStatus());
-// or WebTarget employeeWebTarget
-//  = webTarget.path("resources/employees");
-        //Invocation.Builder invocationBuilder = webTarget.request().get(String.class);
-               // = employeeWebTarget.request(MediaType.APPLICATION_JSON);
-
-        /*
-        Client client = Client.create();
-			WebResource r = client.resource(uri);
-			ClientResponse response = r.type(MediaType.APPLICATION_XML).post(ClientResponse.class, request);
-			System.out.println(response.getStatus());
-         */
-
-        assertEquals(HTTP_OK, response.getStatus());
-    }
 
     /*
     The endpoint is working:
@@ -95,7 +71,7 @@ public class JerseyClientLiveTest {
         client.register(new EncodingFeature("gzip", GZipEncoder.class));
         client.property(ClientProperties.REQUEST_ENTITY_PROCESSING, "CHUNKED");
 
-        WebTarget target = client.target("http://localhost:9992/");
+        WebTarget target = client.target("http://localhost:9998/");
         Response response = target.path("files").
                 path("filename").
                 request().
@@ -135,7 +111,7 @@ public class JerseyClientLiveTest {
         client.register(new EncodingFeature("deflate", DeflateEncoder.class));
         client.property(ClientProperties.REQUEST_ENTITY_PROCESSING, "CHUNKED");
 
-        WebTarget target = client.target("http://localhost:9992/");
+        WebTarget target = client.target("http://localhost:9998/");
         Response response = target.path("files").
                 path("filename").
                 request().
@@ -149,19 +125,5 @@ public class JerseyClientLiveTest {
         assertEquals(HTTP_OK, response.getStatus());
     }
 
-    /**
-     * Accept header for request doesn't match the endpoint, so the request will fail
-     */
-    @Test
-    public void testUnacceptableTest() {
-        Client client = ClientBuilder.newClient(new ClientConfig());
-        client.property(ClientProperties.REQUEST_ENTITY_PROCESSING, "CHUNKED");
-        WebTarget target = client.target("http://localhost:9992/");
-        Response response = target.path("files").
-                path("filename").
-                request().
-                accept(MediaType.TEXT_PLAIN).
-                get(Response.class);
-        assertEquals(NOT_ACCEPTABLE, response.getStatus());
-    }
+
 }

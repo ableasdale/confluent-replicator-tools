@@ -1,4 +1,13 @@
+package io.confluent.csg;
+
+import jakarta.ws.rs.core.Application;
+import org.glassfish.jersey.test.JerseyTest;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
+import io.confluent.csg.FileProcessManager;
+import io.confluent.csg.providers.JerseyServer;
+import io.confluent.csg.util.Utils;
 import jakarta.ws.rs.core.MediaType;
+import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.hc.client5.http.async.methods.SimpleHttpResponse;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
@@ -11,7 +20,9 @@ import org.apache.hc.core5.http.*;
 import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
@@ -28,8 +39,24 @@ import java.util.Enumeration;
 import static java.net.HttpURLConnection.HTTP_OK;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class HttpClientTest {
+//@TestInstance(Lifecycle.PER_CLASS)
+public class HttpClientTest extends JerseyTest {
+
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
+    @BeforeAll
+    public static void setup() {
+        PropertiesConfiguration config = Utils.loadConfigurationFile();
+        FileProcessManager fpm = new FileProcessManager();
+        fpm.processLogFile(config.getString("logfile"));
+    }
+
+    @Override
+    public Application configure() {
+        // enable(TestProperties.LOG_TRAFFIC);
+        // enable(TestProperties.DUMP_ENTITY);
+        return JerseyServer.getBaseResourceConfig();
+    }
 
     @Test
     public void testChunkedGzippedResponseFromServer() throws URISyntaxException, IOException, InterruptedException {
@@ -37,7 +64,7 @@ public class HttpClientTest {
         java.net.http.HttpClient client = java.net.http.HttpClient.newBuilder()
                 .version(java.net.http.HttpClient.Version.HTTP_2)
                 .build();
-        URI uri = new URI("http://localhost:9992/files/filename");
+        URI uri = new URI(TestHelper.UNIT_TEST_JERSEY_URL+"/files/filename");
         java.net.http.HttpRequest request = java.net.http.HttpRequest.newBuilder()
                 .uri(uri)
                 .header("Accept-Encoding", "gzip")
@@ -89,7 +116,7 @@ public class HttpClientTest {
     public void getLargeTxtFileAsChunkedWithDeflateTest() throws IOException, ProtocolException {
 
         CloseableHttpClient client = HttpClientBuilder.create().disableContentCompression().build();
-        HttpGet request = new HttpGet("http://localhost:9992/files/filename");
+        HttpGet request = new HttpGet(TestHelper.UNIT_TEST_JERSEY_URL+"/files/filename");
         request.setHeader(HttpHeaders.ACCEPT_ENCODING, "deflate");
         request.addHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_OCTET_STREAM.toString());
 
@@ -111,13 +138,13 @@ public class HttpClientTest {
                 //.disableRedirectHandling()
                 .disableContentCompression()
                 .build();
-        HttpGet request = new HttpGet("http://localhost:9992/files/filename");
+        HttpGet request = new HttpGet(TestHelper.UNIT_TEST_JERSEY_URL+"/files/filename");
         request.setHeader(HttpHeaders.ACCEPT_ENCODING, "gzip");
 
         CloseableHttpResponse response = httpClient.execute(request);
 
         for (Header h : response.getHeaders()) {
-            LOG.info("*" + h.toString());
+            LOG.debug("*" + h.toString());
         }
         assertEquals("gzip", response.getHeader("Content-Encoding").getValue());
         assertEquals(ContentType.APPLICATION_OCTET_STREAM.toString(), response.getHeader("Content-Type").getValue());
