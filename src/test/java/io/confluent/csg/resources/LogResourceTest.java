@@ -21,11 +21,10 @@ import org.glassfish.jersey.test.JerseyTest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static jakarta.ws.rs.core.Response.Status.NOT_ACCEPTABLE;
 import static java.net.HttpURLConnection.HTTP_OK;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class PlaintextStreamerResourceTest extends JerseyTest {
+public class LogResourceTest extends JerseyTest {
 
     @BeforeAll
     public static void setup() {
@@ -36,27 +35,27 @@ public class PlaintextStreamerResourceTest extends JerseyTest {
 
     @Override
     public Application configure() {
+        // enable(TestProperties.LOG_TRAFFIC);
+        // enable(TestProperties.DUMP_ENTITY);
         return JerseyServer.getBaseResourceConfig();
     }
 
     @Test
     public void getLargeTxtFileAsChunkedWithDeflate() {
-
-        // This DOES work: curl --compressed -v -o - http://localhost:9992/files/fn
         Client client = ClientBuilder.newClient(new ClientConfig());
         client.register(new EncodingFeature("deflate", DeflateEncoder.class));
         client.property(ClientProperties.REQUEST_ENTITY_PROCESSING, "CHUNKED");
 
         WebTarget target = client.target(TestHelper.UNIT_TEST_JERSEY_URL);
-        Response response = target.path("files").
-                path("filename").
+        Response response = target.path("logs").
+                path("workerTask").
                 request().
                 accept(HttpHeaders.ACCEPT_ENCODING, "deflate").
-                accept(MediaType.APPLICATION_OCTET_STREAM).
+                accept(MediaType.TEXT_HTML).
                 get(Response.class);
 
         assertEquals("deflate", response.getHeaderString("Content-Encoding"));
-        assertEquals(MediaType.APPLICATION_OCTET_STREAM, response.getHeaderString("Content-Type"));
+        assertEquals(MediaType.TEXT_HTML+";charset=UTF-8", response.getHeaderString("Content-Type"));
         assertEquals("chunked", response.getHeaderString("Transfer-Encoding"));
         assertEquals(HTTP_OK, response.getStatus());
         response.close();
@@ -64,40 +63,22 @@ public class PlaintextStreamerResourceTest extends JerseyTest {
 
     @Test
     public void getLargeTxtFileAsChunkedWithGzip() {
-
         Client client = ClientBuilder.newClient(new ClientConfig());
         client.register(new EncodingFeature("gzip", GZipEncoder.class));
         client.property(ClientProperties.REQUEST_ENTITY_PROCESSING, "CHUNKED");
 
         WebTarget target = client.target(TestHelper.UNIT_TEST_JERSEY_URL);
-        Response response = target.path("files").
-                path("filename").
+        Response response = target.path("logs").
+                path("workerTask").
                 request().
                 accept(HttpHeaders.ACCEPT_ENCODING, "gzip").
-                accept(MediaType.APPLICATION_OCTET_STREAM).
+                accept(MediaType.TEXT_HTML).
                 get(Response.class);
 
         assertEquals("gzip", response.getHeaderString("Content-Encoding"));
-        assertEquals(MediaType.APPLICATION_OCTET_STREAM, response.getHeaderString("Content-Type"));
+        assertEquals(MediaType.TEXT_HTML+";charset=UTF-8", response.getHeaderString("Content-Type"));
         assertEquals("chunked", response.getHeaderString("Transfer-Encoding"));
         assertEquals(HTTP_OK, response.getStatus());
-        response.close();
-    }
-
-    /**
-     * Accept header for request doesn't match the endpoint, so the request will fail
-     */
-    @Test
-    public void testUnacceptableTest() {
-        Client client = ClientBuilder.newClient(new ClientConfig());
-        client.property(ClientProperties.REQUEST_ENTITY_PROCESSING, "CHUNKED");
-        WebTarget target = client.target("http://localhost:9998/");
-        Response response = target.path("files").
-                path("filename").
-                request().
-                accept(MediaType.TEXT_PLAIN).
-                get(Response.class);
-        assertEquals(NOT_ACCEPTABLE.getStatusCode(), response.getStatus());
         response.close();
     }
 }

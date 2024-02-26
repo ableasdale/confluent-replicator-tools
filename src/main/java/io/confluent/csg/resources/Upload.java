@@ -42,9 +42,7 @@ public class Upload extends BaseResource {
     ) {
 
         String filePath = contentDispositionHeader.getFileName();
-
         LOG.info(String.format("Handling the upload of a new ErrorLog / Messages file: %s", filePath));
-
         FileProcessManager fpm = new FileProcessManager();
         try {
             fpm.processLogFile(fileInputStream, filePath);

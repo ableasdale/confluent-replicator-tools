@@ -14,12 +14,7 @@ import jakarta.ws.rs.core.Response;
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.glassfish.grizzly.utils.Charsets;
 import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.message.DeflateEncoder;
-import org.glassfish.jersey.message.GZipEncoder;
-import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.jersey.server.filter.EncodingFilter;
 import org.glassfish.jersey.test.JerseyTest;
-import org.glassfish.jersey.test.TestProperties;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -60,27 +55,10 @@ public class ConfigResourceTest extends JerseyTest {
                 header(HttpHeaders.ACCEPT_CHARSET, Charsets.UTF8_CHARSET).
                 //header().
                 //assertEquals("chunked", response.getHeaderString("Transfer-Encoding"));
-               // accept(MediaType.TEXT_HTML).//HttpHeaders.ACCEPT_CHARSET
-                //accept(MediaType.)
-               //         accept(Charsets.UTF8_CHARSET).
                 get(Response.class);
 
-        //WebTarget webTarget
-        //      = client.target("http://localhost:9992/");
-        //WebResource r = client.resource(uri);
-        // ClientResponse response = webTarget..type(MediaType.APPLICATION_XML).post(ClientResponse.class, request);
-        //System.out.println(response.getStatus());
-// or WebTarget employeeWebTarget
-//  = webTarget.path("resources/employees");
         //Invocation.Builder invocationBuilder = webTarget.request().get(String.class);
         // = employeeWebTarget.request(MediaType.APPLICATION_JSON);
-
-        /*
-        Client client = Client.create();
-			WebResource r = client.resource(uri);
-			ClientResponse response = r.type(MediaType.APPLICATION_XML).post(ClientResponse.class, request);
-			System.out.println(response.getStatus());
-         */
 
         for (String s: response.getHeaders().keySet()){
             LOG.debug("k"+s+" | "+response.getHeaderString(s));
