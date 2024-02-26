@@ -43,6 +43,8 @@ dependencies {
     implementation group: 'org.glassfish.jersey.core', name: 'jersey-client', version: '3.1.5'
     // Trying to test with Apache HTTP Client
     implementation 'org.apache.httpcomponents.client5:httpclient5:5.3.1'
+    implementation 'com.github.mizosoft.methanol:methanol:1.7.0'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux:3.2.3'
 
 }
 
