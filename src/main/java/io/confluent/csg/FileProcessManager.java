@@ -106,7 +106,8 @@ public class FileProcessManager {
                 } else if (line.contains("values:")) {
                     // Is this configuration
                     Utils.processConfigurationBlock(line, reader, configMap);
-                } else if (line.contains("org.apache.kafka.common.errors") && line.contains("Exception")) {
+                } else if ( (line.contains("org.apache.kafka.common.errors") || line.contains("java.util.concurrent"))
+                        && line.contains("Exception")) {
                     // Generic Apache common Exception stack trace
                     Utils.processStackTrace(line, reader, exceptionList);
                 } else {

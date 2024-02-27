@@ -1,13 +1,14 @@
 <div class="container">
   <footer class="py-3 my-4 border-top">
     <ul class="nav justify-content-center border-bottom pb-3 mb-3">
-      <li class="nav-item"><a href="https://docs.confluent.io/platform/current/multi-dc-deployments/replicator/index.html" class="nav-link px-2 text-muted">Replicator Documentation</a></li>
       <li class="nav-item"><a href="https://github.com/ableasdale/confluent-replicator-tools" class="nav-link px-2 text-muted">This Project on GitHub</a></li>
+      <li class="nav-item"><a href="https://docs.confluent.io/platform/current/multi-dc-deployments/replicator/index.html" class="nav-link px-2 text-muted">Replicator Documentation</a></li>
       <li class="nav-item"><a href="https://docs.confluent.io/platform/current/multi-dc-deployments/replicator/replicator-quickstart.html#rep-quickstart-monitoring" class="nav-link px-2 text-muted">Configuring Replicator Monitoring in C3</a></li>
+      <li class="nav-item"><a href="https://docs.confluent.io/platform/current/multi-dc-deployments/replicator/replicator-tuning.html" class="nav-link px-2 text-muted">Tuning Replicator</a></li>
       <li class="nav-item"><a href="https://docs.confluent.io/platform/current/installation/versions-interoperability.html" class="nav-link px-2 text-muted">Supported Versions</a></li>
     </ul>
      <p class="text-center text-body-secondary">&copy; 2024 Confluent</p>
-     <a href="http://confluent.io"><img class="d-block mx-auto mb-4" src="../assets/blue-confluent.svg" alt="" width="50" height="50"></a>
+     <a href="http://confluent.io"><img class="d-block mx-auto" src="../assets/blue-confluent.svg" alt="" width="40" height="40"></a>
   </footer>
 </div>
 <!- Javascript below -->
@@ -35,13 +36,8 @@
   </script>
   <!-- DROPZONE -->
   <script>
-          $(function () {
-              Dropzone.options.dropzone = {
-                  maxFilesize: 9096, // MB
-                  parallelUploads: 16
-              };
-              $("dropzone").dropzone({ url: "/upload", maxFilesize: 9 });
-          });
+    let dropzone = new Dropzone("#dropzone", { url: "/upload", maxFilesize: 9096,maxFilesize: 9096, parallelUploads: 1});
+    dropzone.on("success", file => { location.reload(); });
   </script>
   <script>
     /* Popper stuff https://popper.js.org/docs/v2/tutorial/
