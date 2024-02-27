@@ -3,6 +3,7 @@ package io.confluent.csg.util;
 import io.confluent.csg.FileProcessManager;
 import io.confluent.csg.providers.JerseyServer;
 import io.confluent.csg.providers.LogDataProvider;
+import io.confluent.csg.resources.Log;
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
@@ -104,6 +105,19 @@ public class Utils {
         }
 
     }
+
+    public static void processStackTrace(String startingLine, BufferedReader reader, List exceptionList) throws IOException {
+        // TODO - add to some kind of Exception map to track the frequency
+
+        exceptionList.add(startingLine);
+        String subsequentLine = reader.readLine();
+        String endMarker = "at java.lang.Thread.run";
+        while (!StringUtils.contains(subsequentLine, endMarker) && !subsequentLine.contains("INFO") && !subsequentLine.contains("WARN") && !subsequentLine.contains("ERROR")){
+            exceptionList.add(subsequentLine);
+            subsequentLine = reader.readLine();
+        }
+    }
+
     public static void processArrayFromLine(String line, String[] arr){
         // TODO - fine for now - but should handle other log levels
         String line2 = lineAfterLogLevel(line, "INFO");

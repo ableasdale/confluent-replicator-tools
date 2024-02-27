@@ -1,5 +1,6 @@
 package io.confluent.csg.providers;
 
+import com.google.common.collect.ImmutableSet;
 import io.confluent.csg.util.Consts;
 import io.confluent.csg.util.Utils;
 import jakarta.ws.rs.core.UriBuilder;
@@ -67,7 +68,10 @@ public class JerseyServer extends Thread {
             final CompressionConfig compressionConfig = nl.getCompressionConfig();
             compressionConfig.setCompressionMode(CompressionConfig.CompressionMode.ON); // the mode
             compressionConfig.setCompressionMinSize(1); // the min amount of bytes to compress
-            compressionConfig.setCompressableMimeTypes("text/plain", "text/html"); // the mime types to compress
+            compressionConfig.setCompressibleMimeTypes(ImmutableSet.<String> builder()
+                    .add("text/plain")
+                    .add("text/html")
+                    .build());
             server.start();
             synchronized (this) {
                 //CTRL-C to stop the server

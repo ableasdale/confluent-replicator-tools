@@ -1,31 +1,21 @@
 package io.confluent.csg;
 
-import jakarta.ws.rs.core.Application;
-import org.glassfish.jersey.test.JerseyTest;
-import org.junit.jupiter.api.TestInstance.Lifecycle;
-import io.confluent.csg.FileProcessManager;
 import io.confluent.csg.providers.JerseyServer;
 import io.confluent.csg.util.Utils;
-import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Application;
 import org.apache.commons.configuration2.PropertiesConfiguration;
-import org.apache.hc.client5.http.async.methods.SimpleHttpResponse;
-import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
-import org.apache.hc.client5.http.entity.GzipDecompressingEntity;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.*;
-import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
-import org.apache.hc.core5.http.io.entity.EntityUtils;
-import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.hc.core5.http.message.StatusLine;
+import org.glassfish.jersey.test.JerseyTest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.IOException;
@@ -33,8 +23,6 @@ import java.lang.invoke.MethodHandles;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.MessageFormat;
-import java.util.Collections;
-import java.util.Enumeration;
 
 import static java.net.HttpURLConnection.HTTP_OK;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -143,9 +131,22 @@ public class HttpClientTest extends JerseyTest {
 
         CloseableHttpResponse response = httpClient.execute(request);
 
-        for (Header h : response.getHeaders()) {
+        // TODO - attempted to fix the deprecation messages... :(
+        //HttpResponse response =  httpClient.execute( request );
+               // .connectTimeout(MILLIS_ONE_SECOND)
+               // .socketTimeout(MILLIS_ONE_SECOND)
+               // .execute();
+      // HttpResponse httpResponse = response.returnResponse();
+        // StatusLine statusLine = httpResponse.getStatusLine();
+
+        //HttpClientResponseHandler<String> response = new BasicHttpClientResponseHandler();
+        //response.
+        //final String responseBody = httpClient.execute(request, response);
+        // CloseableHttpResponse response = httpClient.execute(request);
+/*
+        for (Header h : responseBody.getHeaders()) {
             LOG.debug("*" + h.toString());
-        }
+        } */
         assertEquals("gzip", response.getHeader("Content-Encoding").getValue());
         assertEquals(ContentType.APPLICATION_OCTET_STREAM.toString(), response.getHeader("Content-Type").getValue());
         assertEquals("chunked", response.getHeader("Transfer-Encoding").getValue());

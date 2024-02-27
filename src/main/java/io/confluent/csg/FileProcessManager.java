@@ -54,6 +54,7 @@ public class FileProcessManager {
             List unknownTopicOrPartition = new ArrayList();
             List schemaRegistry = new ArrayList();
             List kerberosTGT = new ArrayList();
+            List exceptionList = new ArrayList();
 
             while (line != null) {
                 if (line.contains("License for control-center expires in")) {
@@ -105,6 +106,9 @@ public class FileProcessManager {
                 } else if (line.contains("values:")) {
                     // Is this configuration
                     Utils.processConfigurationBlock(line, reader, configMap);
+                } else if (line.contains("org.apache.kafka.common.errors") && line.contains("Exception")) {
+                    // Generic Apache common Exception stack trace
+                    Utils.processStackTrace(line, reader, exceptionList);
                 } else {
                     // Throw it into "unclassified"
                     unclassified.add(line);
@@ -133,6 +137,7 @@ public class FileProcessManager {
             logItemMap.put("unknownTopicOrPartition", unknownTopicOrPartition);
             logItemMap.put("schemaRegistry", schemaRegistry);
             logItemMap.put("kerberosTGT", kerberosTGT);
+            logItemMap.put("exceptionList", exceptionList);
 
             LOG.info("File Parsing has completed.");
             Map<String, Integer> logSizeMap = new HashMap<>();

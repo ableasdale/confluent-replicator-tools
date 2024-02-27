@@ -29,6 +29,7 @@
                 <li><a class="dropdown-item" href="/logs/unknownTopicOrPartition">Unknown Topic or Partition Messages</a></li>
                 <li><a class="dropdown-item" href="/logs/schemaRegistry">Schema Registry Messages</a></li>
                 <li><a class="dropdown-item" href="/logs/kerberosTGT">Kerberos TGT Messages</a></li>
+                <li><a class="dropdown-item" href="/logs/exceptionList">Kafka Common Exceptions</a></li>
             </ul>
           </li>
           <li class="nav-item dropdown">
