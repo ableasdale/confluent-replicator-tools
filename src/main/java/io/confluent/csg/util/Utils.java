@@ -27,12 +27,14 @@ public class Utils {
         return MessageFormat.format("{0} caught: {1}", e.getClass().getName(),
                 e);
     }
+
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
     public static String lineAfterLogLevel(String line, String level) {
         return StringUtils.substringAfter(line, level);
     }
 
-    public static void startApplication(){
+    public static void startApplication() {
         PropertiesConfiguration config = Utils.loadConfigurationFile();
         FileProcessManager fpm = new FileProcessManager();
         fpm.processLogFile(config.getString("logfile"));
@@ -64,7 +66,8 @@ public class Utils {
         return LogDataProvider.getInstance().getConfig();
     }
 
-    /** To get this list run: grep "values:" /var/log/kafka/connect-distributed.log | cut -d " " -f4 | sort | uniq
+    /**
+     * To get this list run: grep "values:" /var/log/kafka/connect-distributed.log | cut -d " " -f4 | sort | uniq
      * AbstractConfig
      * AdminClientConfig
      * ConnectorConfig
@@ -82,53 +85,60 @@ public class Utils {
      * WorkerInfo
      */
     public static void processConfigurationBlock(String startingLine, BufferedReader reader, Map configMap) throws IOException {
+        LOG.debug("in ProcessConfigurationBlock");
         // Get the specific value (as item)
         String l2 = Utils.lineAfterLogLevel(startingLine, "INFO");
         String item = StringUtils.substringBefore(l2.trim(), "values:").trim();
-        String endMarker = item+")";
+        String endMarker = item + ")";
+        List configArray = new ArrayList();
         // Skip to next line immediately
         String subsequentLine = reader.readLine();
-
-        // Add to the Map if necessary
-        if (!configMap.containsKey(item)) {
+        if (subsequentLine.startsWith("[") && subsequentLine.contains("]")) {
+            LOG.info("no stacktrace - TODO - dumping in array for now");
+            configArray.add(subsequentLine);
+        } else if (!configMap.containsKey(item)) {
             LOG.debug("Start Marker: " + item);
             LOG.debug("End Marker should be:" + endMarker);
-            LOG.debug("First Line of Config: "+subsequentLine);
+            LOG.debug("First Line of Config: " + subsequentLine);
 
-            List configArray = new ArrayList();
-            while (!StringUtils.contains(subsequentLine, endMarker)){
+            // Add to the Map if necessary
+
+            while (!StringUtils.contains(subsequentLine, endMarker)) {
                 configArray.add(subsequentLine);
                 subsequentLine = reader.readLine();
             }
             configMap.put(item, configArray);
-            LOG.debug("Last Line of Config: "+subsequentLine);
+            LOG.debug("Last Line of Config: " + subsequentLine);
         }
 
     }
 
     public static void processStackTrace(String startingLine, BufferedReader reader, List exceptionList) throws IOException {
         // TODO - add to some kind of Exception map to track the frequency
-
         exceptionList.add(startingLine);
         String subsequentLine = reader.readLine();
-        String endMarker = "at java.lang.Thread.run";
-        while (!StringUtils.contains(subsequentLine, endMarker) && !subsequentLine.contains("INFO") && !subsequentLine.contains("WARN") && !subsequentLine.contains("ERROR")){
-            exceptionList.add(subsequentLine);
-            subsequentLine = reader.readLine();
+        if (subsequentLine.startsWith("[") && subsequentLine.contains("]")) {
+            LOG.info("no stacktrace - skipping");
+        } else {
+            String endMarker = "at java.lang.Thread.run";
+            while (!StringUtils.contains(subsequentLine, endMarker) && !subsequentLine.contains("INFO") && !subsequentLine.contains("WARN") && !subsequentLine.contains("ERROR")) {
+                exceptionList.add(subsequentLine);
+                subsequentLine = reader.readLine();
+            }
         }
     }
 
-    public static void processArrayFromLine(String line, String[] arr){
+    public static void processArrayFromLine(String line, String[] arr) {
         // TODO - fine for now - but should handle other log levels
         String line2 = lineAfterLogLevel(line, "INFO");
-        if(line2 != null && line2.contains("[") && line2.contains("]")){
-            String items = StringUtils.substringBetween(line2, "[","]");
-            if(items.contains(",")){
+        if (line2 != null && line2.contains("[") && line2.contains("]")) {
+            String items = StringUtils.substringBetween(line2, "[", "]");
+            if (items.contains(",")) {
                 //LOG.info(line);
-                LOG.debug("Items: "+ items.split(",").length);
+                LOG.debug("Items: " + items.split(",").length);
                 //LOG.info("?"+StringUtils.containsAny(items, arr));
 
-                for (String s : arr){
+                for (String s : arr) {
                     //LOG.info("?"+StringUtils.contains(items, s));
                     if (!StringUtils.contains(items, s)) {
                         LOG.debug("nope" + s);

@@ -25,6 +25,12 @@
                       </ul>
                     </div>
                 </div>
+                <div class="px-3 py-1 my-3">
+                    <ul>
+                        <h3>Support Knowledgebase Articles</h3>
+                        <li><a href="https://support.confluent.io/hc/en-us/articles/5582610489620-How-to-investigate-out-of-range-partition-offset-warnings-when-using-replicator-executable">How to investigate out-of-range partition offset warnings when using replicator executable</a>
+                    </ul>
+                </div>
             </main>
             <#include "includes/footer.ftl">
         </div>

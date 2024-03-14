@@ -38,6 +38,8 @@ public class FileProcessManager {
             String[] arr = LogDataProvider.getInstance().getConfig().getStringArray("topiclist");
 
             // All the things that we currently classify
+            List rebalance = new ArrayList();
+            List distributedHerder = new ArrayList();
             List license = new ArrayList();
             List kafkaInfo = new ArrayList();
             List workerState = new ArrayList<>();
@@ -57,7 +59,15 @@ public class FileProcessManager {
             List exceptionList = new ArrayList();
 
             while (line != null) {
-                if (line.contains("License for control-center expires in")) {
+                if(line.contains("Rebalance")) {
+                    rebalance.add(line);
+                }
+                // Fixing an issue where a line like this is logged:
+                // Connector <name> config updated
+                 else if(line.contains("config updated")) {
+                    LOG.debug("should see this!");
+                    distributedHerder.add(line);
+                } else if (line.contains("License for control-center expires in")) {
                     license.add(line);
                 } else if (line.contains("INFO Creating task ")) {
                     // TODO - extract full stack!
@@ -122,6 +132,8 @@ public class FileProcessManager {
                 line = reader.readLine();
             }
             // All done - collate results and add them to the LogDataProvider as a Map
+            logItemMap.put("rebalance", rebalance);
+            logItemMap.put("distributedHerder", distributedHerder);
             logItemMap.put("license", license);
             logItemMap.put("kafkaInfo", kafkaInfo);
             logItemMap.put("workerState", workerState);

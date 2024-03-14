@@ -13,6 +13,8 @@
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Log Messages</a>
             <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="/logs/rebalance">Rebalance Activity</a></li>
+                <li><a class="dropdown-item" href="/logs/distributedHerder">Distributed Herder Activity</a></li>
                 <li><a class="dropdown-item" href="/logs/license">C3 License Messages</a></li>
                 <li><a class="dropdown-item" href="/logs/kafkaInfo">Kafka Information Messages</a></li>
                 <li><a class="dropdown-item" href="/logs/workerState">Connector State Changes</a></li>
