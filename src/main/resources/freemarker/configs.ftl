@@ -8,7 +8,7 @@
             <main>
                 <#include "includes/toast.ftl">
                 <div class="px-3 py-1 my-3">
-                  <h1 class="display-6 fw-semibold">Configs: <small class="text-muted">${name}</small></h1>
+                  <h2>Configs: <small class="text-muted">${name}</small></h2>
                 </div>
                 <div class="px-4 py-1 my-3">
                 <textarea id="textarea">

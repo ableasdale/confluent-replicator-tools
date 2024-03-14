@@ -62,10 +62,7 @@ public class FileProcessManager {
                 if(line.contains("Rebalance")) {
                     rebalance.add(line);
                 }
-                // Fixing an issue where a line like this is logged:
-                // Connector <name> config updated
-                 else if(line.contains("config updated")) {
-                    LOG.debug("should see this!");
+                 else if(line.contains("org.apache.kafka.connect.runtime.distributed.DistributedHerder") || line.contains("distributed.DistributedHerder")) {
                     distributedHerder.add(line);
                 } else if (line.contains("License for control-center expires in")) {
                     license.add(line);
@@ -79,9 +76,7 @@ public class FileProcessManager {
                 } else if (line.contains("org.apache.kafka.connect.runtime.TransformationChain")) {
                     // TODO - extract all lines between this and (org.apache.kafka.clients.producer.ProducerConfig)
                 } else if (line.contains("Group coordinator") || line.contains("Discovered group coordinator")
-                || line.contains("internals.AbstractCoordinator") || line.contains("distributed.DistributedHerder")
-                || line.contains("distributed.WorkerCoordinator")
-                ) {
+                || line.contains("internals.AbstractCoordinator") || line.contains("distributed.WorkerCoordinator")) {
                     groupCoordinator.add(line);
                 } else if (line.contains("Metadata update failed") || line.contains("fetchMetadata")) {
                     metadata.add(line);
@@ -181,6 +176,5 @@ public class FileProcessManager {
         el.setErrorLogTxt(IOUtils.readLines(new InputStreamReader(is, Charset.forName("UTF-8"))));
         processErrorLog(el);
         LOG.info(MessageFormat.format("Completed processing ErrorLog file: {0}", filename)); */
-
     }
 }
