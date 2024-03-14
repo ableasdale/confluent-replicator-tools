@@ -34,6 +34,8 @@
                         <li><a href="https://support.confluent.io/hc/en-us/articles/360053074272-What-s-causing-Kafka-client-request-disconnect-or-timeout-errors">What's causing Kafka client request disconnect or timeout errors</a></li>
                         <li><a href="https://support.confluent.io/hc/en-us/articles/360051921532-Why-there-is-a-WakeUpException-observed-within-confluent-replicator">Why there is a WakeUpException observed within confluent replicator</a></li>
                         <li><a href="https://support.confluent.io/hc/en-us/articles/360051860452-Confluent-Replicator-may-result-in-lot-of-duplicate-messages-if-offset-start-consumer">Confluent Replicator may result in lot of duplicate messages if offset.start=consumer</a></li>
+                        <li><a href="https://support.confluent.io/hc/en-us/articles/360056467652-What-s-causing-connector-and-tasks-fail-with-ConnectException-Task-already-exists-in-this-worker">What's causing connector and tasks fail with "ConnectException: Task already exists in this worker"</a></li>
+                        <li><a href="https://support.confluent.io/hc/en-us/articles/360052121292-What-can-cause-connector-tasks-being-in-an-UNASSIGNED-state">What can cause connector tasks being in an UNASSIGNED state</a></li>
                     </ul>
                 </div>
             </main>
