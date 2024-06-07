@@ -1,0 +1,29 @@
+SLF4J: Class path contains multiple SLF4J bindings.
+SLF4J: Found binding in [jar:file:/usr/share/java/cp-base-new/slf4j-log4j12-1.7.30.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: Found binding in [jar:file:/usr/share/java/cp-base-new/slf4j-simple-1.7.30.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J: Actual binding is of type [org.slf4j.impl.Log4jLoggerFactory]
+log4j:WARN No appenders could be found for logger (io.confluent.admin.utils.cli.KafkaReadyCommand).
+log4j:WARN Please initialize the log4j system properly.
+log4j:WARN See http://logging.apache.org/log4j/1.2/faq.html#noconfig for more info.
+Jun 07, 2024 1:49:40 PM org.glassfish.jersey.internal.inject.Providers checkProviderRuntime
+WARNING: A provider org.apache.kafka.connect.runtime.rest.resources.RootResource registered in SERVER runtime does not implement any provider interfaces applicable in the SERVER runtime. Due to constraint configuration problems the provider org.apache.kafka.connect.runtime.rest.resources.RootResource will be ignored. 
+Jun 07, 2024 1:49:40 PM org.glassfish.jersey.internal.inject.Providers checkProviderRuntime
+WARNING: A provider org.apache.kafka.connect.runtime.rest.resources.ConnectorsResource registered in SERVER runtime does not implement any provider interfaces applicable in the SERVER runtime. Due to constraint configuration problems the provider org.apache.kafka.connect.runtime.rest.resources.ConnectorsResource will be ignored. 
+Jun 07, 2024 1:49:40 PM org.glassfish.jersey.internal.inject.Providers checkProviderRuntime
+WARNING: A provider org.apache.kafka.connect.runtime.rest.resources.ConnectorPluginsResource registered in SERVER runtime does not implement any provider interfaces applicable in the SERVER runtime. Due to constraint configuration problems the provider org.apache.kafka.connect.runtime.rest.resources.ConnectorPluginsResource will be ignored. 
+Jun 07, 2024 1:49:40 PM org.glassfish.jersey.internal.inject.Providers checkProviderRuntime
+WARNING: A provider org.apache.kafka.connect.runtime.rest.resources.ConfluentV1MetadataResource registered in SERVER runtime does not implement any provider interfaces applicable in the SERVER runtime. Due to constraint configuration problems the provider org.apache.kafka.connect.runtime.rest.resources.ConfluentV1MetadataResource will be ignored. 
+Jun 07, 2024 1:49:40 PM org.glassfish.jersey.internal.inject.Providers checkProviderRuntime
+WARNING: A provider io.confluent.connect.replicator.monitoring.WorkerMetricsResource registered in SERVER runtime does not implement any provider interfaces applicable in the SERVER runtime. Due to constraint configuration problems the provider io.confluent.connect.replicator.monitoring.WorkerMetricsResource will be ignored. 
+Jun 07, 2024 1:49:40 PM org.glassfish.jersey.internal.inject.Providers checkProviderRuntime
+WARNING: A provider io.confluent.connect.replicator.monitoring.ReplicatorMetricsResource registered in SERVER runtime does not implement any provider interfaces applicable in the SERVER runtime. Due to constraint configuration problems the provider io.confluent.connect.replicator.monitoring.ReplicatorMetricsResource will be ignored. 
+Jun 07, 2024 1:49:40 PM org.glassfish.jersey.internal.inject.Providers checkProviderRuntime
+WARNING: A provider org.apache.kafka.connect.runtime.rest.resources.LoggingResource registered in SERVER runtime does not implement any provider interfaces applicable in the SERVER runtime. Due to constraint configuration problems the provider org.apache.kafka.connect.runtime.rest.resources.LoggingResource will be ignored. 
+Jun 07, 2024 1:49:41 PM org.glassfish.jersey.internal.Errors logErrors
+WARNING: The following warnings have been detected: WARNING: The (sub)resource method listLoggers in org.apache.kafka.connect.runtime.rest.resources.LoggingResource contains empty path annotation.
+WARNING: The (sub)resource method createConnector in org.apache.kafka.connect.runtime.rest.resources.ConnectorsResource contains empty path annotation.
+WARNING: The (sub)resource method listConnectors in org.apache.kafka.connect.runtime.rest.resources.ConnectorsResource contains empty path annotation.
+WARNING: The (sub)resource method listConnectorPlugins in org.apache.kafka.connect.runtime.rest.resources.ConnectorPluginsResource contains empty path annotation.
+WARNING: The (sub)resource method serverInfo in org.apache.kafka.connect.runtime.rest.resources.RootResource contains empty path annotation.
+

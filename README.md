@@ -10,6 +10,14 @@ Start by running the main class `io.confluent.csg.Server`:
 gradle run
 ```
 
+## Docker: download the connector logs for local inspection
+
+In this example, the container is `connect1`, so we can use this command to dump the file contents out to a local file for inspection:
+
+```bash
+docker logs connect1 2> file.log
+```
+
 If you're debugging an issue and want to review the logs, you can use `less -fr`:
 
 ```bash
